@@ -1,0 +1,29 @@
+{
+  "name": "SVGtoJS",
+  "version": "1.0.0",
+  "description": "compress SVG",
+  "main": "svgtojs.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackdarker/SVGtoJS"
+  },
+  "keywords": [
+    "SVG",
+    "javascript",
+    "inline",
+    "compress"
+  ],
+  "author": "JD",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jackdarker/SVGtoJS"
+  },
+  "homepage": "https://github.com/jackdarker/SVGtoJS",
+  "dependencies": {
+    "pako": "^1.0.0",
+    "svgo": "^1.0.0"
+  }
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titel der Seite | Name der Website</title>
+<script src="svg.min.js"></script>
+<script src="pako.min.js"></script>
+<script src="images.js"></script>
+  </head>
+  <body>
+    <p>This html-file demonstrates how to use the generated js. If you dont see graphics below check if image.js was generated.</p>
+<div id='canvas'></div>
+<div id="out"></div>
+
+</body>
+<script>
+  var draw = SVG().addTo('#canvas').size(600, 300);
+function showSvg(background,item,x) {
+  var node = SVG(item);
+  node.move(x,0);
+  if(node) node.addTo(draw);
+}
+let images=loadImages({});
+let svg=images.Blob1();
+document.getElementById("out").textContent=svg;
+showSvg(null,svg,00);showSvg(null,images.wolf3(),100);showSvg(null,images.Blob1(),400);
+</script>
+</html>
