@@ -86,18 +86,17 @@ function strToBuf(data){let s=2,l=data.length/s,buf=new Uint8Array(l);for(var i=
  */
 async function onFileRead(name,data){
     var fname= name.split('.')[0];
-    var compressed = data.replace(/\r\n|\n/g, ""); //remove linebreaks
+    var compressed = data.replace(/\r\n|\n/g, ""); //remove linebreaks as it esses up js
     compressed = (await svgo.optimize(data, { path: name,multipass: false,plugins:svplug})).data; //todo what is multipass?
-    //the cache is used to buffer decompressed svg-strings after accessing them once; todo: might need to clean out that cache after a while 
+    //the cache is used to buffer decompressed svg-strings after accessing them once; todo: might need to clean out that cache if it gets to big 
     var code ='container.'+fname+'=function(){ let x=this.cache.'+fname+';if(!x) x=this.cache.'+fname+'=';
     if(opt.compr==='gzip') {
-        compressed = pako.gzip(compressed);//,{to:'string'});
+        compressed = pako.gzip(compressed);
         var compressed2 = bufferToStrg(compressed);
         //var compressed3 = strToBuf(compressed2);
-
         code+='window.pako.ungzip(this.strToBuf(\''+compressed2+'\'),{to:\'string\'});';
     } else {
-        code+='(\''+compressed+'\');';
+        code+='(`'+compressed+'`);'; //note the template literals beause the string can contain " and '
     }
     code+='return(x);};\n';
     await FS.promises.appendFile(jsFileHdl,code);
