@@ -21,9 +21,9 @@ function showSvg(background,item,x) {
   node.move(x,0);
   if(node) node.addTo(draw);
 }
-let images=loadImages({});
-let svg=images.Blob1();
+let _images=images({});
+let svg=_images.Blob1();
 document.getElementById("out").textContent=svg;
-showSvg(null,svg,00);showSvg(null,images.testMap(),100);showSvg(null,images.Blob1(),400);
+showSvg(null,svg,00);showSvg(null,_images.testMap(),100);showSvg(null,_images.Blob1(),400);
 </script>
 </html>

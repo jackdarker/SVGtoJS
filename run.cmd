@@ -1,1 +1,1 @@
-node svgtojs.js c:none i:example//in o:example//out//images.js
+node svgtojs.js c:none i:example//in o:example//out l:images

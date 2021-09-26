@@ -7,8 +7,10 @@ const SVGO = require('svgo') //svgo for minify svg
 
 const opt = parseCmdLine();
 const baseDir = process.cwd();
-const jsFile = resolve(baseDir+sep+opt.outFile);
-const svplug =[{cleanupIDs: {minify:false}}]; //changing ids creates issues with scripts and if multiple svg are rendered into a scene !
+const jsFile = resolve(baseDir+sep+opt.outDir+sep+opt.outClass+'.js');
+const svplug =[{cleanupIDs: {minify:false}},{removeHiddenElems:{displayNone: false,isHidden:false}}]; 
+//changing ids creates issues with scripts and if multiple svg are rendered into a scene !
+//sometimes you have teplates defined on hidden layers - so dont remove hidden
 const svgo = new SVGO({ js2svg: {},plugins:svplug });
 let jsFileHdl = null; //filehandle
 
@@ -19,10 +21,10 @@ processDirectory(resolve(baseDir+sep+opt.inDir));
 /**
  * walks a directory with svg, minifys them, compress them and place that data in a js wrapped into function with names matching filenames
  * make sure that directorys exist, files and directory have compatible names(no whitespace & specialchars) and there are only svg in the directory
- * the functions are placed within an object; you could merge multiple js into one object if the filenames dont collide !
+ * the functions are placed within an object by calling a function-object with the name you assigned; you could merge multiple js into one object if the filenames dont collide !
  * load the js in your html and call the functions to get the svg-code (as string) that you an use together with svg.js to generate svg-DOM
- *      let images={}, images=loadImages(images); //binds the data to an object
- *      var node = SVG(images.myUglySVGFile()); //call object-function and convert returned svg-string to SVG-DOM
+ *      let AllImages={}, AllImages=images(AllImages); //binds the data to an object
+ *      var node = SVG(AllImages.myUglySVGFile()); //call object-function and convert returned svg-string to SVG-DOM
  * 
  * you need svg.js and pako.js in your dependencys; get them and add them to your html-header:
  * <script src="svg.min.js"></script>
@@ -47,7 +49,7 @@ async function processDirectory(path) {
 }
 async function createJS() {
     jsFileHdl= await FS.promises.open(jsFile,'w');
-    await FS.promises.appendFile(jsFileHdl,"\"use strict\";\n function loadImages(container){ \n");
+    await FS.promises.appendFile(jsFileHdl,"\"use strict\";\n var "+opt.outClass+"=function(container){ \n");
     await FS.promises.appendFile(jsFileHdl,'container.strToBuf=function(data){let s=2,l=data.length/s,buf=new Uint8Array(l);for(var i=0;i<l;i++){buf[i]=(parseInt(data.substr(i*s,s),16));}return buf;}\n');
     await FS.promises.appendFile(jsFileHdl,"container.cache={}; \n");
 }
@@ -108,10 +110,11 @@ async function onFileRead(name,data){
  * @return {*} 
  */
 function parseCmdLine(){
-    let opt = {compr:'none', inDir:'example//in', outFile:'example//out//images.js'};
+    let opt = {compr:'none', inDir:'example//in', outDir:'example//out',outClass:'images'};
     console.log('you can specify cmd-line options: c:  compression gzip or none ');
     console.log('i:  directory with svg relative to workingdir');
-    console.log('o:  filepath for output relative to workingdir');
+    console.log('o:  directory for output relative to workingdir');
+    console.log('l:  name of class for output');
     for(var i=2;i<process.argv.length;i++) {
         var _op = process.argv[i];
         if(_op.substr(0,2)==='c:') {
@@ -119,7 +122,9 @@ function parseCmdLine(){
         } else if(_op.substr(0,2)==='i:') {
             opt.inDir=(_op.substr(2));
         } else if(_op.substr(0,2)==='o:') {
-            opt.outFile=_op.substr(2);
+            opt.outDir=_op.substr(2);
+        } else if(_op.substr(0,2)==='l:') {
+            opt.outClass=_op.substr(2);
         } else {
             console.log('unknown option '+_op);
         }
