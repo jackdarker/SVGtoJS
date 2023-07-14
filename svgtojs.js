@@ -8,9 +8,10 @@ const SVGO = require('svgo') //svgo for minify svg
 const opt = parseCmdLine();
 const baseDir = process.cwd();
 const jsFile = resolve(baseDir+sep+opt.outDir+sep+opt.outClass+'.js');
-const svplug =[{cleanupIDs: {minify:false}},{removeHiddenElems:{displayNone: false,isHidden:false}}]; 
+const svplug =[{removeRasterImages:{active:true}},{cleanupIDs: {remove:false,minify:false}},{removeHiddenElems:{displayNone: false,isHidden:false}}]; 
+//raster images are removed; I only use the for image-tracing and forget to remove them;  !! JPEG is not reoved but JPG ! Issue in the plugin !!
 //changing ids creates issues with scripts and if multiple svg are rendered into a scene !
-//sometimes you have teplates defined on hidden layers - so dont remove hidden
+//sometimes you have templates defined on hidden layers - so dont remove hidden
 const svgo = new SVGO({ js2svg: {},plugins:svplug });
 let jsFileHdl = null; //filehandle
 
